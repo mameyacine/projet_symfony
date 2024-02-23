@@ -96,16 +96,6 @@ public function __construct(ManagerRegistry $doctrine, UserRepository $userRepos
     #[Route('/courses/{courseId}/qcm/{qcmId}/submit_qcm', name: 'submit_qcm', methods: ['POST'])]
     public function submitQcm(Request $request, int $idS, int $courseId, int $qcmId, NoteStudentRepository $noteStudentRepository): Response
     {
-        dump($request->request->all());
-        // Récupérer les réponses de l'utilisateur à partir de la demande
-        $userAnswers = $request->request->get('answers');
-        dump($userAnswers);
-        // Assurez-vous que les réponses sont un tableau
-        if (!is_array($userAnswers)) {
-            // Traiter l'erreur ou affecter une valeur par défaut
-            $userAnswers = [];
-        }
-
         // Vérifier le nombre de fois que l'utilisateur a passé ce QCM
         $userAttempts = $noteStudentRepository->countAttemptsByUserAndQCM($idS, $qcmId);
         $userAttempts++;
@@ -114,32 +104,38 @@ public function __construct(ManagerRegistry $doctrine, UserRepository $userRepos
             // Si l'utilisateur a déjà passé le QCM trois fois, rediriger ou renvoyer un message d'erreur
             return $this->redirectToRoute('student_course_error', ['error' => 'Vous avez déjà passé ce QCM trois fois.']);
         }
+    
+        $scorePercentage = $this->calculateStudentScore($request->request->all()['answers'], $qcmId);
+        $previousScore = $noteStudentRepository->findOneBy(['users' => $idS, 'QCMs' => $qcmId]);
 
-        // Stocker les données du QCM et les réponses de l'utilisateur dans un tableau
-        $qcmData = [
-            'qcm_id' => $qcmId,
-            'user_id' => $idS,
-            'user_answers' => $userAnswers
-        ];
-
-        dump($qcmData);
-
-        // Encoder les données en JSON
-        $jsonData = json_encode($qcmData);
-
-        // Créer un cookie pour stocker les données du QCM et les réponses de l'utilisateur
-        $cookie = new Cookie('qcm_data', $jsonData, strtotime('+1 day'));
-
+    
+        // Vérifie si le résultat n'est pas null et si c'est une instance de NoteStudent
+        if ($previousScore !== null && $previousScore instanceof NoteStudent) {
+            // Comparer les scores uniquement si le résultat est conforme à nos attentes
+            if ($scorePercentage > $previousScore->getScore()) {
+                // Mettre à jour la base de données uniquement si la note est supérieure à celle précédente
+                $this->updateStudentScore($idS, $qcmId, $scorePercentage);
+            }
+        } elseif ($previousScore !== null) {
+            // Si le résultat n'est pas null mais n'est pas une instance de NoteStudent, cela peut indiquer un problème
+            throw new \RuntimeException('La méthode findOneBy a retourné un objet inattendu.');
+        } else {
+            // Si le résultat est null, cela signifie qu'il n'y a pas de score précédent pour cet utilisateur et ce QCM
+            $this->updateStudentScore($idS, $qcmId, $scorePercentage);
+        }
+    
+        $cookie = new Cookie('qcm_results', json_encode(['qcm_id' => $qcmId, 'score' => $scorePercentage, ]), strtotime('+1 day'));
         // Créer une réponse avec une redirection
         $response = $this->redirectToRoute('recommendations', ['idS' => $idS]);
-
         // Ajouter le cookie à la réponse
         $response->headers->setCookie($cookie);
-
+    
         // Retourner la réponse avec la redirection et le cookie
         return $response;
-    }
+    
 
+    }
+    
 
     public function updateStudentScore(int $userId, int $qcmId, float $scorePercentage): void
     {
@@ -189,40 +185,35 @@ public function __construct(ManagerRegistry $doctrine, UserRepository $userRepos
     
 
     
-    public function calculateStudentScore(array $answers, int $qcmId): array
-{
-    // Récupérer les questions du même QCM
-    $questions = $this->questionRepository->findBy(['qcm' => $qcmId]);
+    private function calculateStudentScore(array $qcmData, int $qcmId): float
+    {
+        // Récupérer les questions du même QCM
+        $questions = $this->questionRepository->findBy(['qcm' => $qcmId]);
 
-    // Initialiser le nombre de réponses correctes et les réponses incorrectes
-    $correctAnswersCount = 0;
-    $incorrectAnswers = [];
+        // Initialiser le nombre de réponses correctes
+        $correctAnswersCount = 0;
 
-    foreach ($questions as $question) {
-        $questionId = $question->getId();
-        // Vérifier si la question a été répondu par l'utilisateur
-        if (isset($answers[$questionId])) {
-            $userAnswerIndex = (int) $answers[$questionId];
-            // Récupérer l'index de la réponse correcte pour cette question
-            $correctAnswerIndex = (int) $question->getCorrectAnswerIndex();
-            // Comparer l'index de la réponse de l'utilisateur avec l'index de la réponse correcte
-            if ($userAnswerIndex === $correctAnswerIndex) {
-                // Si la réponse est correcte, incrémenter le compteur des réponses correctes
-                $correctAnswersCount++;
-            } else {
-                // Si la réponse est incorrecte, ajouter la question à la liste des réponses incorrectes
-                $incorrectAnswers[] = $question;
+        foreach ($questions as $question) {
+            $questionId = $question->getId();
+            // Vérifier si la question a été répondu par l'utilisateur
+            if (isset($qcmData[$questionId])) {
+                $userAnswerIndex = (int) $qcmData[$questionId];
+                // Récupérer l'index de la réponse correcte pour cette question
+                $correctAnswerIndex = (int) $question->getCorrectAnswerIndex();
+                // Comparer l'index de la réponse de l'utilisateur avec l'index de la réponse correcte
+                if ($userAnswerIndex === $correctAnswerIndex) {
+                    // Si la réponse est correcte, incrémenter le compteur des réponses correctes
+                    $correctAnswersCount++;
+                }
             }
         }
+
+        // Calculer le score en pourcentage
+        $totalQuestions = count($questions);
+        $scorePercentage = ($correctAnswersCount / $totalQuestions) * 100;
+
+        return $scorePercentage;
     }
-
-    // Calculer le score en pourcentage
-    $totalQuestions = count($questions);
-    $scorePercentage = ($correctAnswersCount / $totalQuestions) * 100;
-
-    return [$scorePercentage, $incorrectAnswers];
-}
-
 
         
     
