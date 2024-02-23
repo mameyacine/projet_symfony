@@ -1,0 +1,15 @@
+{# templates/student/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Page d'accueil{% endblock %}
+
+{% block body %}
+    <h1>Bienvenue, étudiant {{ student_id }}</h1>
+    <p>Que souhaitez-vous faire ?</p>
+    <ul>
+        <li><a href="{{ path('student_courses', {'idS':student_id}) }}">Voir mes cours</a></li>
+        <li><a href="{{ path('student_forum', {'idS':student_id}) }}">Accéder au forum</a></li>
+                
+    </ul>
+{% endblock %}

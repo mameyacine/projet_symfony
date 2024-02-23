@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leçons du cours {{ course.name }}</title>
+</head>
+<body>
+    <h1>Leçons du cours {{ course.name }}</h1>
+    <a href="{{ path('student_qcm', {'idS': idS, 'courseId': course.id, 'qcmId': qcm.id}) }}">Faire le QCM</a>
+    </form>
+
+    <ul>
+        {% for lesson in lessons %}
+            <li>{{ lesson.name }}</li>
+
+      
+            <li>{{ lesson.getOriginalFileName() }}</li>
+ 
+            <!-- Affichez d'autres détails de la leçon si nécessaire -->
+        {% endfor %}
+    </ul>
+</body>
+</html>

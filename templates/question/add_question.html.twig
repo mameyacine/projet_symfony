@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add Question{% endblock %}
+
+{% block body %}
+    <h1>Add Question</h1>
+    <p>Form for adding a question to the QCM</p>
+
+    {{ form_start(form) }}
+    {{ form_row(form.content) }}
+    {{ form_row(form.answers) }}
+    {{ form_row(form.correctAnswerIndex) }}
+    {{ form_end(form) }}
+
+    <a href="{{ path('qcm_show', {'idA': admin_id, 'idC':course_id, 'id': qcm_id}) }}">Back to QCM</a>
+{% endblock %}

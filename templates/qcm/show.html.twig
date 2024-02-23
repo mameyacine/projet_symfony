@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du QCM{% endblock %}
+
+{% block body %}
+    <h1>Détails du QCM</h1>
+
+    <p><strong>Titre :</strong> {{ qcm.title }}</p>
+
+    <h2>Questions :</h2>
+    {% if qcm.questions is not empty %}
+        <ul>
+            {% for question in qcm.questions %}
+                <li>{{ question.content }}</li>
+                <a href="{{ path('edit_question', {'idA': admin_id, 'idC': qcm.course.id, 'idQ': qcm.id, 'id': question.id}) }}">edit</a>
+                <a href="{{ path('show_question', {'idA': admin_id, 'idC': qcm.course.id, 'idQ': qcm.id, 'id': question.id}) }}">show</a>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune question pour ce QCM.</p>
+    {% endif %}
+
+    <a href="{{ path('add_question', { 'idA': admin_id, 'idC': qcm.course.id, 'id': qcm.id }) }}">Ajouter une question
+    </a>
+{% endblock %}

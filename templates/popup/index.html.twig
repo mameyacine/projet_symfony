@@ -1,0 +1,24 @@
+
+{# templates/popup/index.html.twig #}
+
+<div id="popup-content">
+    <h2>Sélectionnez les thèmes et cours qui vous intéressent :</h2>
+    <form action="{{ path('process_popup_submission', {'idS': student_id}) }}" method="post">
+        <!-- Insérez ici les thèmes et les cours sous forme de checkboxes ou de listes -->
+        <!-- Exemple avec des checkboxes pour les thèmes -->
+        {% for theme in themes %}
+            <label>
+                <input type="checkbox" name="themes[]" value="{{ theme.id }}">
+                {{ theme.name }}
+            </label>
+        {% endfor %}
+        <!-- Exemple avec des checkboxes pour les cours -->
+        {% for course in courses %}
+            <label>
+                <input type="checkbox" name="courses[]" value="{{ course.id }}">
+                {{ course.name }}
+            </label>
+        {% endfor %}
+        <button type="submit">Valider</button>
+    </form>
+</div>

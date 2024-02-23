@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cours de {{ user.username }}</title>
+</head>
+<body>
+    <h1>Cours de {{ user.username }}</h1>
+
+    <ul>
+        {% for course in courses %}
+            <li><a href="{{ path('course_lessons', {'idS': student_id , 'courseId': course.id}) }}">{{ course.name }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

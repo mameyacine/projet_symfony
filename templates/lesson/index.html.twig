@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lesson index{% endblock %}
+
+{% block body %}
+    <h1>Lesson index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Course</th>
+                <th>File</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for lesson in lessons %}
+            <tr>
+                <td>{{ lesson.name }}</td>
+                                <td>{{ lesson.course.name }}</td> {# Accéder au nom du cours associé #}
+
+                <td>
+                <td>
+                    {% if lesson.getFile() %}
+                        <a href="{{ path('download_lesson',{'idA': admin_id, 'idC': course_id, 'id': lesson.id}) }}">{{ lesson.getOriginalFileName() }}</a>
+                    {% else %}
+                        No file attached
+                    {% endif %}
+                </td>
+
+                </td>
+                <td>
+                    <a href="{{ path('show_lesson',{'idA': admin_id, 'idC': course_id,'id': lesson.id}) }}">show</a>
+                    <a href="{{ path('edit_lesson', {'idA': admin_id, 'idC': course_id, 'id': lesson.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">No records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('new_lesson', {'idA': admin_id, 'idC': course_id}) }}">Create new</a>
+{% endblock %}

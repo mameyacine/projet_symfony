@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des QCM{% endblock %}
+
+{% block body %}
+    <h1>Liste des QCM</h1>
+
+    {% if qcms is empty %}
+        <p>Aucun QCM trouvé.</p>
+    {% else %}
+        <ul>
+            {% for qcm in qcms %}
+                <li>{{ qcm.title }}
+                    <a href="{{ path('show_qcm', {'id': qcm.id}) }}">Show</a>
+
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

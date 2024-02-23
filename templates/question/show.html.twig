@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Question Details{% endblock %}
+
+{% block body %}
+    <h1>Question Details</h1>
+    <p><strong>QCM Title:</strong> {{ question.getQcm().getTitle() }}</p>
+    <p><strong>Course:</strong> {{ question.getLesson().getCourse().getName() }}</p>
+    <p><strong>Lesson:</strong> {{ question.getLesson().getName() }}</p>
+    <p><strong>Question:</strong> {{ question.getContent() }}</p>
+    <p><strong>Answers:</strong></p>
+
+    <ul>
+        {% for answer in question.getAnswers() %}
+            <li>{{ answer }}</li>
+        {% endfor %}
+    </ul>
+    <p><strong>Correct Answer Index:</strong> {{ question.getCorrectAnswerIndex() }}</p>
+
+
+        <a href="{{ path('qcm_show', {'idA': admin_id,'idC':qcm.course.id, 'id': qcm.id}) }}">Back to QCM</a>
+
+
+{% endblock %}

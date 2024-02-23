@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QCM</title>
+</head>
+<body>
+    <h1>QCM</h1>
+
+    <h2>{{ qcm.title }}</h2>
+    <form action="{{ path('submit_qcm', {'idS': student_id, 'courseId': qcm.course.id, 'qcmId': qcm.id}) }}" method="post">
+        {% for question in qcm.questions %}
+            <fieldset>
+                <legend>{{ question.content }}</legend>
+                {% for key, choice in question.answers %}
+                    <label>
+                    <input type="radio" name="answers[{{ question.id }}]" value="{{ key }}">
+                        {{ choice }}
+                    </label><br>
+                {% endfor %}
+            </fieldset>
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+
+
+
+    <a href="{{ path('student_courses', {'idS': student_id}) }}">Retour aux cours</a>
+</body>
+</html>

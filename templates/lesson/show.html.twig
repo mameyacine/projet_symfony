@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lesson{% endblock %}
+
+{% block body %}
+    <h1>Lesson</h1>
+
+    <table class="table">
+        <tbody>
+      
+            <tr>
+                <th>Lesson Name </th>
+                <td>{{ lesson.name }}</td>
+            </tr>
+                        <tr>
+                <th>File Name </th>
+                <td>{{ lesson.getOriginalFileName() }}</td>
+            </tr>
+
+       
+  
+
+        </tbody>
+    </table>
+
+    <a href="{{ path('index_lesson', {'idA': admin_id, 'idC': course_id}) }}">back to list</a>
+
+<a href="{{ path('edit_lesson', {'idA': admin_id, 'idC': course_id, 'id': lesson.id}) }}">edit</a>
+
+    {{ include('lesson/_delete_form.html.twig') }}
+{% endblock %}
