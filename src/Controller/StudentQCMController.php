@@ -107,6 +107,7 @@ public function __construct(ManagerRegistry $doctrine, UserRepository $userRepos
     
         $scorePercentage = $this->calculateStudentScore($request->request->all()['answers'], $qcmId);
         $previousScore = $noteStudentRepository->findOneBy(['users' => $idS, 'QCMs' => $qcmId]);
+        $userAnswers = $request->request->get('answers');
 
     
         // Vérifie si le résultat n'est pas null et si c'est une instance de NoteStudent
@@ -124,7 +125,7 @@ public function __construct(ManagerRegistry $doctrine, UserRepository $userRepos
             $this->updateStudentScore($idS, $qcmId, $scorePercentage);
         }
     
-        $cookie = new Cookie('qcm_results', json_encode(['qcm_id' => $qcmId, 'score' => $scorePercentage, ]), strtotime('+1 day'));
+        $cookie = new Cookie('qcm_results', json_encode(['qcm_id' => $qcmId, 'score' => $scorePercentage, 'user_answers' => $userAnswers]), strtotime('+1 day'));
         // Créer une réponse avec une redirection
         $response = $this->redirectToRoute('recommendations', ['idS' => $idS]);
         // Ajouter le cookie à la réponse
