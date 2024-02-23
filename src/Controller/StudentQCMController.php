@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-
+use Symfony\Component\Validator\Constraints\All;
 
 #[Route('/student/{idS}')]
 class StudentQCMController extends AbstractController
@@ -107,8 +107,10 @@ public function __construct(ManagerRegistry $doctrine, UserRepository $userRepos
     
         $scorePercentage = $this->calculateStudentScore($request->request->all()['answers'], $qcmId);
         $previousScore = $noteStudentRepository->findOneBy(['users' => $idS, 'QCMs' => $qcmId]);
+        $all =$request->request->all();
+        dump($all);
         $userAnswers = $request->request->get('answers');
-
+       
     
         // Vérifie si le résultat n'est pas null et si c'est une instance de NoteStudent
         if ($previousScore !== null && $previousScore instanceof NoteStudent) {
