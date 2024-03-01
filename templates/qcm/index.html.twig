@@ -1,20 +1,78 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Liste des QCM{% endblock %}
-
-{% block body %}
-    <h1>Liste des QCM</h1>
-
-    {% if qcms is empty %}
-        <p>Aucun QCM trouvé.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste de QCMs</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
     {% else %}
-        <ul>
-            {% for qcm in qcms %}
-                <li>{{ qcm.title }}
-                    <a href="{{ path('show_qcm', {'id': qcm.id}) }}">Show</a>
-
-                </li>
-            {% endfor %}
-        </ul>
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
     {% endif %}
-{% endblock %}
+</head>
+<body>
+
+    <nav class="px-2 flex justify-between items-center">
+        <h1 class="">Tous les QCM</h1>
+          <div class="flex">
+            <ul>
+                <li><a href="{{ path('app_admin', {'idA': admin_id}) }}" class ="button">Accueil</a></li>
+                <li><a href="{{ path('index_course', {'idA': admin_id}) }}" class ="button">Cours</a></li>
+                <li><a href="{{ path('user_index', {'idA': admin_id}) }}" class ="button" >Utilisateurs</a></li>
+                <li><a href="{{ path('app_logout') }}"  class="logout border"><i class="fas fa-sign-out-alt"></i> </a></li>
+
+                
+            </ul>
+          
+
+            </div>
+    </nav>
+
+    <div class="flex justify-between my-4">
+    <div class="flex">
+        <form action="{{ path('app_admin_change_theme', {'idA': admin_id}) }}" method="post" class="m-4">
+                    <input type="hidden" name="theme" value="{{ theme == 'light' ? 'dark' : 'light' }}">
+                    <button type="submit" class="button"> <i class="fa fa-adjust"></i> </button>
+        </form>
+        <a href="{{ path('qcm_create', {'idA': admin_id}) }}" class="m-4 plus ">
+            <i class="fas fa-plus-circle"></i>
+        </a>
+    </div>
+
+    <div>
+        <form action="{{ path('search_qcm', {'idA': admin_id}) }}" method="get" class="flex">
+            <input type="text" name="query" placeholder="Rechercher..." class="m-2 p-2 rounded search">
+            <button type="submit" class="button"><i class="fas fa-search rounded"></i></button>
+        </form>
+    </div>
+</div>
+
+    <div class="container mx-auto mt-8">
+        <table class="w-full shadow-md rounded-lg overflow-hidden">
+            <thead class="uppercase text-sm leading-normal">
+                <tr class="haut">
+                    <th class="py-3 px-6 text-left">QCM Name</th>
+                    <th class="py-3 px-6 text-left">Course Name</th>
+                    <th class="py-3 px-6 text-center">Actions</th> 
+                </tr>
+            </thead>
+            <tbody class="text-sm font-light">
+                {% for qcm in qcms %}
+                    <tr class="border-b border-gray-200 ">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ qcm.title }}</td>
+                        <td class="py-3 px-6 text-left">{{ qcm.course.name }}</td>
+                        <td class="py-3 px-6 text-center">
+                            <a href="{{ path('qcm_show', {'idA': admin_id,'idC':qcm.course.id, 'id': qcm.id}) }}" ><i class="fas fa-eye"></i> </a>
+                            <a href="{{ path('qcm_edit', {'idA': admin_id, 'idC': qcm.course.id, 'id': qcm.id}) }}" ><i class="fas fa-edit"></i></a>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        
+</body>
+</html>

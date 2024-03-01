@@ -132,7 +132,7 @@ class Course
     {
         if (!$this->postForums->contains($postForum)) {
             $this->postForums->add($postForum);
-            $postForum->setCourses($this);
+            $postForum->setCourse($this);
         }
 
         return $this;
@@ -142,8 +142,8 @@ class Course
     {
         if ($this->postForums->removeElement($postForum)) {
             // set the owning side to null (unless already changed)
-            if ($postForum->getCourses() === $this) {
-                $postForum->setCourses(null);
+            if ($postForum->getCourse() === $this) {
+                $postForum->setCourse(null);
             }
         }
 

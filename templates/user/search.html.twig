@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+   
+</head>
+
+<body>
+
+    <nav class=" flex justify-between items-center">
+        <h1 class="m-2 p-2">Résultats de la recherche : {{ searchQuery }}</h1>
+        <div class="flex my-2">
+            <ul>
+                <li><a href="{{ path('user_index', {'idA': admin_id}) }}" class="button"><i class="fas fa-arrow-rotate-left"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container mx-auto px-4 py-8">
+        <table class="w-full shadow-md rounded-lg overflow-hidden">
+            <thead class="uppercase text-sm leading-normal">
+                <tr class="haut">
+                    <th class="py-3 px-6 text-left">Username</th>
+                    <th class="py-3 px-6 text-left">Email</th>
+                    <th class="py-3 px-6 text-left">Firstname</th>
+                    <th class="py-3 px-6 text-left">Lastname</th>
+                    <th class="py-3 px-6 text-center">Actions</th> 
+                </tr>
+            </thead>
+            <tbody class="text-sm font-light">
+                {% for user in users %}
+                    <tr class="border-b border-gray-200 ">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ user.username }}</td>
+                        <td class="py-3 px-6 text-left">{{ user.email }}</td>
+                        <td class="py-3 px-6 text-left">{{ user.firstname }}</td>
+                        <td class="py-3 px-6 text-left">{{ user.lastname }}</td>
+                        <td class="py-3 px-6 text-center">
+                            <a href="{{ path('show_user', {'idA': admin_id, 'id': user.id}) }}"><i class="fas fa-eye"></i> </a>
+                            <a href="{{ path('edit_user', {'idA': admin_id, 'id': user.id}) }}"><i class="fas fa-edit"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">No records found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div> <!-- Fermeture du conteneur -->
+</body>
+</html>

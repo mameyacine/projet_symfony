@@ -1,40 +1,58 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cours{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+   
+</head>
+<body>
+    <nav class=" flex justify-between items-center px-4">
+        <h1 class="m-2">Cours de {{ course.name }}</h1>
+        <div>
+            <a href="{{ path('index_course', {'idA': admin_id}) }}" class="button"><i class="fas fa-arrow-rotate-left"></i></a>
+        </div>
+    </nav>
+    <div class="flex justify-between items-center my-4">
+            <form action="{{ path('app_admin_change_theme', {'idA': admin_id}) }}" method="post" class="m-4">
+                <input type="hidden" name="theme" value="{{ theme == 'light' ? 'dark' : 'light' }}">
+                <button type="submit" class="button"> <i class="fa fa-adjust"></i> </button>
+            </form>
+            <a href="{{ path('new_lesson', {'idA': admin_id, 'idC': course.id}) }}" class="plus py-2 px-4 bg-blue-500 text-white rounded-md"><i class="fas fa-plus-circle "></i></a>
+     </div>
 
-{% block title %}Course{% endblock %}
+    <div class="container mx-auto px-4 py-8"> <!-- Ajout du conteneur -->
+        
 
-{% block body %}
-    <h1>Course</h1>
-
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Name</th>
-                <td>{{ course.name }}</td>
-
-                <th>Theme</th>
-                
-
-                <td>{{ course.theme.name }}</td>
-
-            </tr>
-        </tbody>
-    </table>
-
-    <h2>Lessons</h2>
-    <ul>
-        {% for lesson in course.lessons %}
-            <li>
-                {{ lesson.name }}
-                <a href="{{ path('show_lesson', {'idA': admin_id, 'idC': course.id, 'id': lesson.id}) }}" class="btn btn-info">Show</a>
-            </li>
-        {% endfor %}
-    </ul>
-
-    <form method="post" action="{{ path('delete_course', {'idA': admin_id, 'id': course.id}) }}" onsubmit="return confirm('Are you sure you want to delete this course?');">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ course.id) }}">
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
-
-    <a href="{{ path('new_lesson', {'idA': admin_id, 'idC': course.id}) }}" class="btn btn-primary">Add Lesson</a>
-    <a href="{{ path('index_course' , {'idA': admin_id}) }}" class="btn btn-secondary">Back to List</a>
-{% endblock %}
+        <table class="w-full shadow-md rounded-lg overflow-hidden">
+            <thead>
+                <tr>
+                    <th class="py-3 px-6 text-left">Leçon</th>
+                    <th class="py-3 px-6 text-left">Fichier</th>
+                    <th class="py-3 px-6 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lesson in course.lessons %}
+                <tr class="border-b border-gray-200 ">
+                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ lesson.name }}</td>
+                    <td class="py-3 px-6 text-left">{{ lesson.getOriginalFileName }}</td>
+                    <td class="py-3 px-6 text-center">
+                        <a href="{{ path('show_lesson', {'idA': admin_id, 'idC': course.id, 'id': lesson.id}) }}" class="btn btn-info"><i class="fas fa-eye"></i> </a>
+                        <a href="{{ path('edit_lesson', {'idA': admin_id, 'idC': course.id, 'id': lesson.id}) }}"><i class="fas fa-edit"></i> </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div> <!-- Fermeture du conteneur -->
+</body>
+</html>

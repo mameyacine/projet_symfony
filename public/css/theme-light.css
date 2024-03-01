@@ -1,0 +1,104 @@
+/* Styles spécifiques pour le thème light */
+
+body {
+    background-color: #f8f8f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.container, .edit {
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.button,
+a.button, .plus, .submit, .widget, .label {
+    background-color: #125fac;
+    color: #fff;
+}
+
+.button:hover,
+a.button:hover, .plus:hover, .submit:hover {
+    background-color: #0056b3;
+}
+
+.button, .plus , .logout{
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.subtitle {
+    font-size: 1.6rem;
+    margin-bottom: 40px;
+}
+
+.title {
+    font-size: 2.4rem;
+    margin-bottom: 0px;
+}
+
+h1 {
+    color: white;
+    font-size: 2rem;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.table th {
+    background-color: #f2f2f2;
+}
+
+.table tr:nth-child(even) {
+    background-color: #656060a1;
+}
+
+.table tr:hover {
+    background-color: #ddd;
+}
+
+a {
+    
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+nav {
+    background-color: #112a44;
+}
+
+ul {
+    display: flex;
+}
+
+
+.form{
+    color: black;
+}
+
+.logout {
+    color: red;
+    border: 1px solid red; /* Ajoute une bordure de 1 pixel de large solide de couleur rouge */
+}
+
+h2{
+    color: #125fac;
+}

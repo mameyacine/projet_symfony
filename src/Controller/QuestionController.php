@@ -2,18 +2,17 @@
 
 namespace App\Controller;
 
-use App\Entity\Question;
 use App\Entity\QCM;
-
+use App\Entity\Question;
 use App\Form\QuestionType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Doctrine\Persistence\ManagerRegistry;
-
 
 class QuestionController extends AbstractController
 {
@@ -29,12 +28,14 @@ class QuestionController extends AbstractController
 
 
     #[Route('/admin/{idA}/course/{idC}/qcm/{idQ}/question/{id}', name: 'show_question', methods: ['GET'])]
-    public function show(Question $question, int $idA): Response
+    public function show(Question $question, int $idA, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light'); 
         $qcm = $question->getQcm();
         $course = $qcm->getCourse(); 
         // Assuming you have a method to get the related QCM
         return $this->render('question/show.html.twig', [
+            'theme' =>$theme,
             'question' => $question,
             'admin_id' => $idA,
             'course' =>$course,
@@ -43,8 +44,9 @@ class QuestionController extends AbstractController
     }
 
     #[Route('/admin/{idA}/course/{idC}/qcm/{idQ}/question/{id}/edit', name: 'edit_question', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Question $question, EntityManagerInterface $entityManager, int $idA, int $idC, int $idQ): Response
+    public function edit(Request $request, Question $question, EntityManagerInterface $entityManager, int $idA, int $idC, int $idQ, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light'); 
         $qcm = $question->getQcm();
         $course = $qcm->getCourse();
         $form = $this->createForm(QuestionType::class, $question);
@@ -68,6 +70,7 @@ class QuestionController extends AbstractController
         }
     
         return $this->render('question/edit.html.twig', [
+            'theme' =>$theme,
             'question' => $question,
             'idC' =>$idC,
             'form' => $form,
@@ -79,8 +82,9 @@ class QuestionController extends AbstractController
 
 
     #[Route('/admin/{idA}/course/{idC}/qcm/{idQ}/question/{id}', name: 'delete_question', methods: ['POST'])]
-    public function delete(Request $request, Question $question, EntityManagerInterface $entityManager, int $idA, int $idC): Response
+    public function delete(Request $request, Question $question, EntityManagerInterface $entityManager, int $idA, int $idC, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light'); 
         if ($this->isCsrfTokenValid('delete'.$question->getId(), $request->request->get('_token'))) {
             $entityManager->remove($question);
             $entityManager->flush();
@@ -99,8 +103,9 @@ class QuestionController extends AbstractController
     }
 
     #[Route('/admin/{idA}/course/{idC}/qcm/{id}/add-question', name: 'add_question')]
-    public function addQuestion(Request $request, int $idA, int $idC, int $id): Response
+    public function addQuestion(Request $request, int $idA, int $idC, int $id, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light'); 
         $question = new Question();
         $form = $this->createForm(QuestionType::class, $question);
     
@@ -131,6 +136,7 @@ class QuestionController extends AbstractController
     
         // S'il y a une erreur de soumission ou si le formulaire n'est pas valide, rend le formulaire avec les données
         return $this->render('question/add_question.html.twig', [
+            'theme' =>$theme,
             'form' => $form->createView(),
             'admin_id' => $idA,
             'course_id' => $idC,

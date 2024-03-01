@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des cours disponibles</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+</head>
+
+<body>
+    <div class="container mx-auto">
+            <h2 class="text-3xl font-bold m-4 p-4 text-center">Liste des cours disponibles</h2>
+            {% if courses is not empty %}
+            <form action="{{ path('inscrire_multiple' ,{'idS':idS}) }}" method="post" class="m-2">
+                <ul class="flex flex-wrap">
+                    {% for course in courses %}
+                        <li class="w-1/2"> 
+                            <input type="checkbox" id="course_{{ course.id }}" name="courses[]" value="{{ course.id }}">
+                            <label for="course_{{ course.id }}">{{ course.name }}</label>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <button type="submit" class="m-2 button">M'inscrire</button>
+            </form>
+        {% else %}
+            <p>Aucun cours disponible pour le moment.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

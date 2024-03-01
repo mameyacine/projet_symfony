@@ -1,16 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Cours de {{ user.username }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mes Cours{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
 </head>
 <body>
-    <h1>Cours de {{ user.username }}</h1>
 
-    <ul>
-        {% for course in courses %}
-            <li><a href="{{ path('course_lessons', {'idS': student_id , 'courseId': course.id}) }}">{{ course.name }}</a></li>
-        {% endfor %}
-    </ul>
+    <nav class="px-2 flex justify-between items-center">
+        <h1>Mes Cours</h1>
+        <div class="flex">
+            <ul>
+                <li><a href="{{ path('app_student', {'idS': student_id}) }}" class="button">Accueil</a></li>
+                <li><a href="{{ path('post_forum_index', {'idS': student_id}) }}" class="button">Mes Forums</a></li>
+                <li><a href="{{ path('app_logout') }}"  class="logout border"><i class="fas fa-sign-out-alt"></i> </a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="flex justify-between my-4">
+        <div class="flex">
+            <form action="{{ path('app_student_change_theme', {'idS': student_id}) }}" method="post" class="m-4">
+                <input type="hidden" name="theme" value="{{ theme == 'light' ? 'dark' : 'light' }}">
+                <button type="submit" class="button"> <i class="fa fa-adjust"></i> </button>
+            </form>
+
+             <a href="{{ path('cours_disponibles', {'idS': student_id}) }}" class="m-4 plus ">
+                    Plus de Cours
+                </a>
+        </div>
+
+        <div class= "flex">
+            <form action="{{ path('search_usercourse', {'idS': student_id}) }}" method="get" class="flex">
+                <input type="text" name="query" placeholder="Rechercher..." class="m-2 p-2 rounded search">
+                <button type="submit" class="button"><i class="fas fa-search rounded"></i></button>
+            </form>
+               
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+
+
+        <div class="grid grid-cols-3 gap-4">
+            {% for course in courses %}
+            <a href="{{ path('course_lessons', {'idS': student_id , 'courseId': course.id}) }}" class="btngrid border p-4 rounded-md ">
+                <img src="{{ course.theme.imageUrl }}" alt="{{ course.theme.name }}" class="mx-auto h-20 w-20 object-cover h-40 w-48">
+                <p class="text-center mt-2">{{ course.name }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
 </body>
 </html>
-

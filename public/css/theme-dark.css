@@ -1,0 +1,117 @@
+/* Styles spécifiques pour le thème sombre */
+
+body {
+    background-color: #4b453f;
+    color: #5f5f5f;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.container, .edit  {
+    background-color: #5f4119;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.button,
+a.button, .plus, .submit, .widget, .label {
+    background-color: #b66b25;
+    color: #fff;
+}
+
+.button:hover,
+a.button:hover, .plus:hover, .button:hover {
+    background-color: #8e4b0e; 
+}
+
+.button, .plus , .logout{
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.subtitle {
+    font-size: 1.6rem;
+    margin-bottom: 40px;
+}
+
+.title {
+    font-size: 2.4rem;
+    margin-bottom: 0px;
+}
+
+h1 {
+    color: white;
+    font-size: 2rem;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    border: 1px solid #555;
+    padding: 8px;
+}
+
+.table th {
+    background-color: #6d4916;
+}
+
+.table tr:nth-child(even) {
+    background-color: #885b16;
+}
+
+.table tr:hover {
+    background-color: #555;
+}
+
+a {
+    color: #35220a;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+a:hover {
+    color: #33200b;
+}
+
+nav {
+    background-color: #8e4b0e;
+}
+
+ul {
+    display: flex;
+}
+
+.widget, .label{
+    background-color: #8e4b0e;
+}
+
+.form{
+    color: #8e4b0e;
+} 
+
+.form-bg{
+    background-color: #6b4b20;
+
+}
+
+.search{
+    color:black
+}
+
+
+.logout {
+    color: red;
+    border: 1px solid red; /* Ajoute une bordure de 1 pixel de large solide de couleur rouge */
+}
+
+h2{
+    color: #2e1f0b;
+}

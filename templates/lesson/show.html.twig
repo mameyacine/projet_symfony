@@ -1,31 +1,40 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Leçon{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+   
+</head>
+<body>
+       <nav class=" flex justify-between items-center px-4">
+        <h1 class="m-2">Leçon de {{ lesson.name }}</h1>
+        <div>
+            <a href="{{ path('show_course', { 'idA': admin_id, 'id': course_id}) }}" class="button">
+                <i class="fas fa-arrow-rotate-left"></i>
+            </a>
+        </div>
+    </nav>
 
-{% block title %}Lesson{% endblock %}
-
-{% block body %}
-    <h1>Lesson</h1>
-
-    <table class="table">
-        <tbody>
-      
-            <tr>
-                <th>Lesson Name </th>
-                <td>{{ lesson.name }}</td>
-            </tr>
-                        <tr>
-                <th>File Name </th>
-                <td>{{ lesson.getOriginalFileName() }}</td>
-            </tr>
-
-       
+    <div class="container mx-auto mt-8 max-w-lg mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
   
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-4">{{ lesson.name }}</h2>
+                <a href="{{ path('download_lesson',{'idA': admin_id, 'idC': course_id, 'id': lesson.id}) }}">{{ lesson.getOriginalFileName() }}</a>
+                <div class="flex justify-between items-center">
+                    <a href="{{ path('edit_lesson', {'idA': admin_id, 'idC': course_id, 'id': lesson.id}) }}" class="button "><i class="fas fa-edit"></i></a>
+                    {{ include('lesson/_delete_form.html.twig') }}
 
-        </tbody>
-    </table>
-
-    <a href="{{ path('index_lesson', {'idA': admin_id, 'idC': course_id}) }}">back to list</a>
-
-<a href="{{ path('edit_lesson', {'idA': admin_id, 'idC': course_id, 'id': lesson.id}) }}">edit</a>
-
-    {{ include('lesson/_delete_form.html.twig') }}
-{% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

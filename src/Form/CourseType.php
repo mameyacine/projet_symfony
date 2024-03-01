@@ -3,11 +3,11 @@
 namespace App\Form;
 
 use App\Entity\Course;
-use App\Entity\Theme; // Import the Theme entity
+use App\Entity\Theme;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType; // Import EntityType
+use Symfony\Component\OptionsResolver\OptionsResolver; 
 
 class CourseType extends AbstractType
 {

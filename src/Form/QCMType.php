@@ -22,11 +22,9 @@ class QCMType extends AbstractType
                 'class' => Course::class,
                 'choice_label' => 'name', // Assurez-vous de remplacer 'name' par le champ approprié pour afficher le nom du cours
                 'label' => 'Cours associé', 
-            ])
-
-            ->add('save', SubmitType::class, [
-                'label' => 'Créer',
             ]);
+
+            
     }
 
     public function configureOptions(OptionsResolver $resolver)

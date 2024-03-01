@@ -3,20 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recommendations</title>
+    <title>{% block title %}Recommendations{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
 </head>
 <body>
-    <h1>Recommendations</h1>
+
+<nav class="p-2 flex justify-between items-center">
+    <h1>Recommandations</h1>
+    <div class="flex">
+        <ul>
+            <li><a href="{{ path('app_student', {'idS': idS}) }}" class="button">Accueil</a></li>
+            <li><a href="{{ path('post_forum_index', {'idS': idS}) }}" class="button">Mes Forums</a></li>
+            <li><a href="{{ path('student_courses', {'idS': idS}) }}" class="button ">Mes Courses</a></li>
+            <li><a href="{{ path('app_logout') }}"  class="logout border"><i class="fas fa-sign-out-alt"></i> </a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="flex justify-between">
+    <form action="{{ path('app_student_change_theme', {'idS': idS}) }}" method="post" class="m-4">
+        <input type="hidden" name="theme" value="{{ theme == 'light' ? 'dark' : 'light' }}">
+        <button type="submit" class="button"> <i class="fa fa-adjust"></i> </button>
+    </form>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+    <div>
+        <h2>Votre nouveau score est : {{ studentScore }}</h2>
+
+
+        {% if recommendation is not empty %}
+            <div>
+                <p>{{ recommendation }}</p>
+            </div>
+             {% endif %}
+    </div>
     
-    <p>{{ recommendation }}</p>
-    
-    <h2>Recommended Courses</h2>
-    <ul>
-        {% for course in recommended_courses %}
-            <li>{{ course.title }}</li>
-        {% endfor %}
-    </ul>
-    
-    <p>Student ID: {{ idS }}</p>
+    {% if recommended_courses is not empty %}
+        <div class="mt-8">
+            <h3 class="text-lg font-semibold mb-2">Vous pourriez également aimer :</h3>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {% for course in recommended_courses %}
+                    <a href="{{ path('course_lessons', {'idS': idS , 'courseId': course.id}) }}" class="btngrid border p-4 rounded-md ">
+                        <img src="{{ course.theme.imageUrl }}" alt="{{ course.theme.name }}" class="mx-auto h-20 w-20 object-cover h-40 w-48">
+                        <p class="text-center mt-2">{{ course.name }}</p>
+                    </a>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
+
 </body>
 </html>

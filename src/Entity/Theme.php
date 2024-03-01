@@ -17,16 +17,19 @@ class Theme
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $imageUrl = null;
+
     #[ORM\OneToMany(targetEntity: Course::class, mappedBy: 'theme')]
-    private Collection $courses;
+    private Collection $course;
 
     #[ORM\OneToMany(targetEntity: PostForum::class, mappedBy: 'themes')]
-    private Collection $postForums;
+    private Collection $postForum;
 
     public function __construct()
     {
-        $this->courses = new ArrayCollection();
-        $this->postForums = new ArrayCollection();
+        $this->course = new ArrayCollection();
+        $this->postForum = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -45,18 +48,30 @@ class Theme
         return $this;
     }
 
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(string $imageUrl): self
+    {
+        $this->imageUrl = $imageUrl;
+        return $this;
+    }
+
+
     /**
      * @return Collection<int, Course>
      */
-    public function getCourses(): Collection
+    public function getCourse(): Collection
     {
-        return $this->courses;
+        return $this->course;
     }
 
     public function addCourse(Course $course): self
     {
-        if (!$this->courses->contains($course)) {
-            $this->courses[] = $course;
+        if (!$this->course->contains($course)) {
+            $this->course[] = $course;
             $course->setTheme($this);
         }
         return $this;
@@ -64,7 +79,7 @@ class Theme
 
     public function removeCourse(Course $course): self
     {
-        if ($this->courses->removeElement($course)) {
+        if ($this->course->removeElement($course)) {
             if ($course->getTheme() === $this) {
                 $course->setTheme(null);
             }
@@ -75,30 +90,12 @@ class Theme
     /**
      * @return Collection<int, PostForum>
      */
-    public function getPostForums(): Collection
+    public function getPostForum(): Collection
     {
-        return $this->postForums;
+        return $this->postForum;
     }
 
-    public function addPostForum(PostForum $postForum): static
-    {
-        if (!$this->postForums->contains($postForum)) {
-            $this->postForums->add($postForum);
-            $postForum->setThemes($this);
-        }
+   
 
-        return $this;
-    }
-
-    public function removePostForum(PostForum $postForum): static
-    {
-        if ($this->postForums->removeElement($postForum)) {
-            // set the owning side to null (unless already changed)
-            if ($postForum->getThemes() === $this) {
-                $postForum->setThemes(null);
-            }
-        }
-
-        return $this;
-    }
+   
 }

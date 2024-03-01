@@ -1,37 +1,45 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de l'utilisateur: {{ user.username }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+</head>
+<body>
+    <nav class="flex justify-between items-center px-4">
+        <h1 class="m-2">Utilisateur: {{ user.username }}</h1>
+        <div>
+            <a href="{{ path('user_index', { 'idA': admin_id }) }}" class="button"><i class="fas fa-arrow-rotate-left"></i></a>
+        </div>
+    </nav>
 
-{% block title %}User{% endblock %}
+    <div class="mx-auto mt-8 max-w-lg p-4 rounded-lg shadow-lg overflow-hidden">
+        <div class="mb-4">
+            <strong>Nom d'utilisateur:</strong> {{ user.username }}
+        </div>
+        <div class="mb-4">
+            <strong>Email:</strong> {{ user.email }}
+        </div>
+        <div class="mb-4">
+            <strong>Prénom:</strong> {{ user.firstname }}
+        </div>
+        <div class="mb-4">
+            <strong>Nom:</strong> {{ user.lastname }}
+        </div>
 
-{% block body %}
-    <h1>User</h1>
+        <div class="flex justify-between items-center">
 
-    <table class="table">
-        <tbody>
+        <a href="{{ path('edit_user', {'idA': admin_id,'id': user.id}) }}" class="button"><i class="fas fa-edit"></i></a>
+        {{ include('user/_delete_form.html.twig') }}
+        </div>
 
-            <tr>
-                <th>Username</th>
-                <td>{{ user.username }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ user.email }}</td>
-            </tr>
-            <tr>
-                <th>Firstname</th>
-                <td>{{ user.firstname }}</td>
-            </tr>
-            <tr>
-                <th>Lastname</th>
-                <td>{{ user.lastname }}</td>
-            </tr>
-        
-
-        </tbody>
-    </table>
-
-    <a href="{{ path('user_index', {'idA': admin_id}) }}">back to list</a>
-
-    <a href="{{ path('edit_user', {'idA': admin_id,'id': user.id}) }}">edit</a>
-
-    {{ include('user/_delete_form.html.twig') }}
-{% endblock %}
+        </div>
+</body>
+</html>

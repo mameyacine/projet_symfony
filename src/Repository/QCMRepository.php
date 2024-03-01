@@ -20,6 +20,14 @@ class QCMRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, QCM::class);
     }
+    public function searchByTitle(string $title): array
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.title LIKE :title')
+            ->setParameter('title', '%' . $title . '%')
+            ->getQuery()
+            ->getResult();
+    }
 
 //    /**
 //     * @return QCM[] Returns an array of QCM objects

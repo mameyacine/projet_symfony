@@ -2,18 +2,21 @@
 
 namespace App\Controller;
 
+use App\Entity\Course;
 use App\Entity\Lesson;
 use App\Form\LessonType;
-use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Attribute\Route;
+
+
 
 #[Route('admin/{idA}/course/{idC}/lesson')]
 class LessonController extends AbstractController
@@ -25,24 +28,17 @@ class LessonController extends AbstractController
         $this->doctrine = $doctrine;
     }
 
-    #[Route('/', name: 'index_lesson', methods: ['GET'])]
-    public function index(LessonRepository $lessonRepository, int $idA, int $idC): Response
-    {
-    
-        return $this->render('lesson/index.html.twig', [
-            'lessons' => $lessonRepository->findAll(),
-            'admin_id' => $idA,
-            'course_id' => $idC,
-        ]);
-    }
-
-
 
  
     #[Route('/new', name: 'new_lesson', methods: ['GET', 'POST'])]
-    public function new(Request $request , int $idA, int $idC): Response
+    public function new(Request $request , int $idA, int $idC, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light'); 
+        $course = $this->doctrine->getRepository(Course::class)->find($idC);
+        
+
         $lesson = new Lesson();
+        $lesson->setCourse($course);
         $form = $this->createForm(LessonType::class, $lesson);
         $form->handleRequest($request);
 
@@ -70,15 +66,17 @@ class LessonController extends AbstractController
             $entityManager = $this->doctrine->getManager();
             $entityManager->persist($lesson);
             $entityManager->flush();
-            return $this->redirectToRoute('index_lesson', ['idA' => $idA, 'idC' => $idC]);
+            return $this->redirectToRoute('show_course', ['idA' => $idA, 'id' => $idC]);
 
         }
 
         return $this->render('lesson/new.html.twig', [
             'lesson' => $lesson,
             'form' => $form->createView(),
+            'course' =>$course,
             'admin_id' => $idA,
             'course_id' => $idC,
+            'theme' => $theme,
         ]);
     }
 
@@ -86,6 +84,7 @@ class LessonController extends AbstractController
     #[Route('/{id}/download', name: 'download_lesson')]
     public function downloadLesson($id): Response
     {
+        
         // Récupérer l'entité Lesson en fonction de l'ID
         $lesson = $this->doctrine->getRepository(Lesson::class)->find($id);
         // Vérifier si l'entité Lesson existe
@@ -113,13 +112,11 @@ class LessonController extends AbstractController
     }
     
     
-
-    
-
  
     #[Route('/{id}/edit', name: 'edit_lesson', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Lesson $lesson, EntityManagerInterface $entityManager, int $idA, int $idC): Response
+    public function edit(Request $request, Lesson $lesson, EntityManagerInterface $entityManager, int $idA, int $idC, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light'); 
         $form = $this->createForm(LessonType::class, $lesson);
         $form->handleRequest($request);
     
@@ -146,7 +143,7 @@ class LessonController extends AbstractController
             // Persister l'entité modifiée
             $entityManager->flush();
     
-            return $this->redirectToRoute('index_lesson', ['idA' => $idA, 'idC' => $idC]);
+            return $this->redirectToRoute('show_course', ['idA' => $idA, 'id' => $idC]);
         }
     
         return $this->render('lesson/edit.html.twig', [
@@ -154,30 +151,34 @@ class LessonController extends AbstractController
             'form' => $form->createView(),
             'admin_id' => $idA,
             'course_id' => $idC,
+            'theme' => $theme,
         ]);
     }
     
     
 
     #[Route('/{id}', name: 'delete_lesson', methods: ['POST'])]
-    public function delete(Request $request, Lesson $lesson, EntityManagerInterface $entityManager, int $idA, int $idC): Response
+    public function delete(Request $request, Lesson $lesson, EntityManagerInterface $entityManager, int $idA, int $idC, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light'); 
         if ($this->isCsrfTokenValid('delete'.$lesson->getId(), $request->request->get('_token'))) {
             $entityManager->remove($lesson);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('index_lesson', ['idA' => $idA, 'idC' => $idC]);
+        return $this->redirectToRoute('show_course', ['idA' => $idA, 'id' => $idC]);
     }
 
     
     #[Route('/{id}', name: 'show_lesson', methods: ['GET'])]
-    public function show(Lesson $lesson, int $idC, int $idA ): Response
+    public function show(Lesson $lesson, int $idC, int $idA, SessionInterface $session ): Response
     {
+        $theme = $session->get('theme', 'light'); 
         return $this->render('lesson/show.html.twig', [
             'lesson' => $lesson,
             'admin_id' => $idA,
             'course_id' => $idC,
+            'theme' => $theme,
         ]);
     }
     

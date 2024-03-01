@@ -49,10 +49,8 @@ class QuestionType extends AbstractType
                     'Troisième réponse' => 2,
                     'Quatrième réponse' => 3
                 ],
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Créer',
             ]);
+            
     }
 
     public function configureOptions(OptionsResolver $resolver)

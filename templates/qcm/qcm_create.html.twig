@@ -1,14 +1,47 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau QCM</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
 
-{% block title %}Créer un nouveau QCM{% endblock %}
+    <style>
+        /* Couleur du texte */
+        .input-color {
+            background-color: #f3f4f6; 
+            border-color: #d1d5d; 
+            color: #374151 !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class=" flex justify-end py-2 px-4">
+        <a href="{{ path('qcm_index', { 'idA': admin_id}) }}" class="button">
+            <i class="fas fa-arrow-rotate-left"></i>
+        </a>
+    </nav>
 
-{% block body %}
-    <h1>Créer un nouveau QCM</h1>
-
-    {{ form_start(form) }}
-        {{ form_row(form.title) }}
-        {{ form_row(form.course) }}
-
-    {{ form_end(form) }}
-{% endblock %}
-
+    <div class="mx-auto mt-8 max-w-lg p-4 rounded-lg shadow-lg overflow-hidden">
+        <form action="{{ path('qcm_create', {'idA': admin_id}) }}" class="p-2" method="POST">
+            {{ form_start(form) }}
+            <div class="mb-4">
+                {{ form_label(form.title, 'Nom du QCM:', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+                {{ form_widget(form.title, {'class': 'input-color mt-1 w-full'}) }}
+            </div>
+            <div class="mb-4">
+                {{ form_label(form.course, 'Nom du cours:', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+                {{ form_widget(form.course, {'class': 'input-color mt-1 w-full'}) }}
+            </div>
+            <button type="submit" class="mt-4 inline-block bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400">Créer</button>
+            {{ form_end(form) }}
+        </form>
+    </div>
+</body>
+</html>

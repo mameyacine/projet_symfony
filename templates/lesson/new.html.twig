@@ -1,11 +1,36 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Create Lesson{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+</head>
 
-{% block title %}New Lesson{% endblock %}
 
-{% block body %}
-    <h1>Create new Lesson</h1>
+<body>
 
-    {{ include('lesson/_form.html.twig') }}
 
-    <a href="{{ path('index_lesson' , {'idA': admin_id, 'idC': course_id}) }}">back to list</a>
-{% endblock %}
+
+    <nav class=" flex justify-between items-center px-4">
+        <h1 class="m-2">Cours de {{course.name}}</h1>
+        <div>
+            <a href="{{ path('show_course', { 'idA': admin_id, 'id': course_id}) }}" class="button">
+                <i class="fas fa-arrow-rotate-left"></i>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mx-auto mt-8 max-w-lg p-4 rounded-lg shadow-lg overflow-hidden">
+        {{ include('lesson/_form.html.twig') }}
+    </div>
+
+
+</body>
+</html>

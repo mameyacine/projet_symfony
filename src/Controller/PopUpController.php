@@ -2,16 +2,15 @@
 
 namespace App\Controller;
 
-use App\Entity\Course;
 use App\Entity\Theme;
 use App\Repository\CourseRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/student/{idS}')]
 class PopUpController extends AbstractController
@@ -25,17 +24,13 @@ class PopUpController extends AbstractController
         $this->courseRepository = $courseRepository;
     }
 
-    #[Route('/pop/up', name: 'app_pop_up')]
-    public function index(): Response
-    {
-        return $this->render('pop_up/index.html.twig', [
-            'controller_name' => 'PopUpController',
-        ]);
-    }
+  
 
     #[Route('/popup', name: 'show_popup')]
     public function showPopup(int $idS, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light');
+
         // Vérifier si la session indiquant que le pop-up a déjà été affiché existe
         if (!$session->has('popup_shown')) {
             // Si la session n'existe pas, marquez le pop-up comme affiché en définissant une variable de session
@@ -43,13 +38,12 @@ class PopUpController extends AbstractController
 
             // Récupérer les thèmes et les cours depuis la base de données
             $themes = $this->doctrine->getRepository(Theme::class)->findAll();
-            $courses = $this->doctrine->getRepository(Course::class)->findAll();
 
             // Afficher le pop-up avec les thèmes et les cours
             return $this->render('popup/index.html.twig', [
                 'student_id' => $idS,
+                'theme' =>$theme,
                 'themes' => $themes,
-                'courses' => $courses,
             ]);
         }
 
@@ -58,8 +52,10 @@ class PopUpController extends AbstractController
     }
 
     #[Route('/process/popup/submission', name: 'process_popup_submission', methods: ['POST'])]
-    public function processPopupSubmission(Request $request, int $idS): Response
+    public function processPopupSubmission(Request $request, int $idS, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light');
+
         // Récupérer les données soumises par l'utilisateur à partir du formulaire pop-up
         $formData = $request->request->all();
 
@@ -84,11 +80,9 @@ class PopUpController extends AbstractController
             $this->doctrine->getManager()->flush();
 
             // Rediriger vers une page affichant les cours auxquels l'utilisateur est maintenant inscrit
-            return $this->redirectToRoute('student_courses', ['idS' => $idS]);
+            return $this->redirectToRoute('student_courses', ['idS' => $idS, 'theme' =>$theme]);
         } else {
-            // Gérer le cas où aucun thème ou cours n'a été sélectionné
-            // Vous pouvez rediriger vers une autre page ou afficher un message d'erreur
-            
+
             // Dans cet exemple, nous renvoyons une réponse JSON avec un message d'erreur
             return new JsonResponse(['error' => 'Aucun thème ou cours n\'a été sélectionné.']);
         }

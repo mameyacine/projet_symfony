@@ -36,7 +36,7 @@ class Question
     public function __construct()
     {
         // Initialize the answers property as an empty array
-        $this->answers = ['', '', ''];
+        $this->answers = ['', '', '', ''];
         
     }
 

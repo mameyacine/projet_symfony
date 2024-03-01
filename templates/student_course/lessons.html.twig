@@ -1,22 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Leçons du cours {{ course.name }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Leçons{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
 </head>
 <body>
+
+<nav class="p-2 flex justify-between items-center">
     <h1>Leçons du cours {{ course.name }}</h1>
-    <a href="{{ path('student_qcm', {'idS': idS, 'courseId': course.id, 'qcmId': qcm.id}) }}">Faire le QCM</a>
-    </form>
+    <div class="flex">
+        <ul>
+            <li><a href="{{ path('app_student', {'idS': idS}) }}" class="button">Accueil</a></li>
+            <li><a href="{{ path('post_forum_index', {'idS': idS}) }}" class="button">Mes Forums</a></li>
+            <li><a href="{{ path('app_logout') }}"  class="logout border"><i class="fas fa-sign-out-alt"></i> </a></li>
+        </ul>
+    </div>
+</nav>
 
-    <ul>
+<div class="flex justify-between my-4">
+
+    <div class="flex justify-between">
+        <form action="{{ path('app_student_change_theme', {'idS': idS}) }}" method="post" class="m-4">
+            <input type="hidden" name="theme" value="{{ theme == 'light' ? 'dark' : 'light' }}">
+            <button type="submit" class="button"> <i class="fa fa-adjust"></i> </button>
+        </form>
+        <a href="{{ path('student_courses', {'idS': idS}) }}" class="button m-4"><i class="fas fa-arrow-rotate-left"></i></a>
+    </div>
+
+
+    <div>
+        {% if qcm is not null %}
+            <a href="{{ path('student_qcm', {'idS': idS, 'courseId': course.id, 'qcmId': qcm.id}) }}" class="mb-4 block button w-items hover:underline">Faire le QCM</a>
+        {% endif %}
+    </div>
+</div>
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-3 gap-6">
         {% for lesson in lessons %}
-            <li>{{ lesson.name }}</li>
-
-      
-            <li>{{ lesson.getOriginalFileName() }}</li>
- 
-            <!-- Affichez d'autres détails de la leçon si nécessaire -->
+            <div class="shadow-md rounded-md p-6">
+                <h2 class="text-xl font-semibold">{{ lesson.name }}</h2>
+                <p class="text-gray-700 mb-4">Fichier: <a href="{{ path('download_userlesson',{'idS': idS, 'courseId': course.id, 'id': lesson.id}) }}" class=" hover:underline">{{ lesson.getOriginalFileName() }}</a></p>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
+</div>
+
+
 </body>
 </html>

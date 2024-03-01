@@ -1,4 +1,34 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+
+    <div class="mb-4 form">
+    {{ form_label(form.username, 'Nom d\'utilisateur : ', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+    {{ form_widget(form.username , {'class': 'input-color mt-1 w-full'}) }}
+</div>
+
+    
+    <div class="mb-4 form">
+        {{ form_label(form.password, 'Mot de passe : ', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+        {{ form_widget(form.password , {'class': 'input-color mt-1 w-full'}) }}
+    </div>
+
+
+    <div class="mb-4 form">
+        {{ form_label(form.email, 'Email : ', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+        {{ form_widget(form.email, {'class': 'input-color mt-1 w-full'}) }}
+    </div>
+
+
+    <div class="mb-4 form">
+        {{ form_label(form.firstname, 'Prénom : ', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+        {{ form_widget(form.firstname , {'class': 'input-color mt-1 w-full'}) }}
+    </div>
+
+
+    <div class="mb-4 form">
+        {{ form_label(form.lastname, 'Nom : ', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+        {{ form_widget(form.lastname , {'class': 'input-color mt-1 w-full'}) }}
+    </div>
+    
+    <button class="button">{{ button_label|default('Enregistrer') }}</button>
 {{ form_end(form) }}

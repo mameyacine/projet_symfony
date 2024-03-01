@@ -1,23 +1,51 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+</head>
+<body>
+    <nav class="px-4">
+        <h1 class="m-2 text-center">Inscription</h1>
+    </nav>
+    <div class="mx-auto mt-8 max-w-lg p-4 rounded-lg shadow-lg overflow-hidden">
+        {{ form_errors(registrationForm) }}
 
-{% block title %}Register{% endblock %}
-
-{% block body %}
-    <h1>Register</h1>
-
-    {{ form_errors(registrationForm) }}
-
-    {{ form_start(registrationForm) }}
-            {{ form_row(registrationForm.email) }}
-
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.firstname) }}
-        {{ form_row(registrationForm.lastname) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
-{% endblock %}
+        {{ form_start(registrationForm) }}
+        <div class="mb-4">
+            {{ form_label(registrationForm.email, 'Email :', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+            {{ form_widget(registrationForm.email, {'class': 'text-gray-900 input-color mt-1 w-full'}) }}
+        </div>
+        <div class="mb-4">
+            {{ form_label(registrationForm.username, 'Nom d\'utilisateur :', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+            {{ form_widget(registrationForm.username, {'class': 'text-gray-900 input-color mt-1 w-full'}) }}
+        </div>
+        <div class="mb-4">
+            {{ form_label(registrationForm.firstname, 'Prénom :', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+            {{ form_widget(registrationForm.firstname, {'class': 'text-gray-900 input-color mt-1 w-full'}) }}
+        </div>
+        <div class="mb-4">
+            {{ form_label(registrationForm.lastname, 'Nom :', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+            {{ form_widget(registrationForm.lastname, {'class': 'text-gray-900 input-color mt-1 w-full'}) }}
+        </div>
+        <div class="mb-4">
+            {{ form_label(registrationForm.plainPassword, 'Mot de passe :', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+            {{ form_widget(registrationForm.plainPassword, {'class': 'text-gray-900 input-color mt-1 w-full'}) }}
+        </div>
+        <div class="mb-4">
+            {{ form_label(registrationForm.agreeTerms, 'Agree Terms :', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+            {{ form_widget(registrationForm.agreeTerms, {'class': 'text-gray-900 input-color mt-1 w-full'}) }}
+        </div>
+        <button type="submit" class="button">S'inscrire</button>
+        {{ form_end(registrationForm) }}
+    </div>
+</body>
+</html>

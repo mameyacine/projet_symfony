@@ -2,17 +2,20 @@
 
 namespace App\Controller;
 use App\Entity\User;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginController extends AbstractController
 {
     #[Route(path: '/', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils, UserInterface $user = null): Response
+    public function login(AuthenticationUtils $authenticationUtils, UserInterface $user = null, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light');
+
         if ($user instanceof User) {
             $roles = $user->getRoles();
             switch ($roles[0]) {
@@ -28,7 +31,10 @@ class LoginController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername, 
+            'error' => $error, 
+        'theme' =>$theme]);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]

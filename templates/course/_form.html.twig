@@ -1,4 +1,31 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Edit Course{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+   <body>
+
+
+{{ form_start(form, {'attr': {'class': 'form-bg m-4 p-4'}}) }}
+    <div class="mb-4 form ">
+        {{ form_label(form.name, 'Nom du cours: ', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+        {{ form_widget(form.name, {'class': 'mt-1 w-full'}) }}
+    </div>
+    <div class="mb-4 form">
+        {{ form_label(form.theme, 'Thème du cours: ', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+        {{ form_widget(form.theme, {'class': 'h-4 form-input bg-gray-200 mt-1 w-full'}) }}
+    </div>
+    
+    <button type="submit" class="button text-white font-bold py-2 px-4 rounded">
+        Enregistrer
+    </button>
 {{ form_end(form) }}
+
+
+</body>
+</html>

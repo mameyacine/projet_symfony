@@ -2,40 +2,37 @@
 
 namespace App\Controller;
 
-use App\Entity\QCM;
-use App\Entity\Question;
-use App\Form\QCMType;
-use App\Form\QuestionType;
 use App\Entity\Course;
+use App\Entity\QCM;
+use App\Form\QCMType;
 use App\Repository\QCMRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
-
+use Symfony\Component\Serializer\SerializerInterface;
 
 class QCMController extends AbstractController
 
 {
-        private $doctrine;
+    private $doctrine;
 
-    
-        public function __construct(ManagerRegistry $doctrine)
-        {
-            $this->doctrine = $doctrine;
+    public function __construct(ManagerRegistry $doctrine)
+    {
+        $this->doctrine = $doctrine;
 
-        }
+    }
     
         
     
   
-    #[Route('/admin/{idA}/qcmList', name: 'qcm_list')]
-    public function list(int $idA): Response
+    #[Route('/admin/{idA}/qcmList', name: 'qcm_index')]
+    public function index(int $idA, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light'); 
         // Récupérer le EntityManager
         $entityManager = $this->doctrine->getManager();
         
@@ -46,10 +43,11 @@ class QCMController extends AbstractController
         $courses = $entityManager->getRepository(Course::class)->findAll();
         
         // Afficher les QCM dans un template Twig avec les détails du cours correspondant
-        return $this->render('qcm/list.html.twig', [
+        return $this->render('qcm/index.html.twig', [
             'qcms' => $qcms,
             'courses' => $courses,
             'admin_id' => $idA,
+            'theme' =>$theme
             // Ajoutez la variable 'course_id'
         ]);
     }
@@ -58,8 +56,9 @@ class QCMController extends AbstractController
 
 
     #[Route('admin/{idA}/qcm/create', name: 'qcm_create')]
-    public function createQCM(Request $request, SerializerInterface $serializer, int $idA): Response
+    public function createQCM(Request $request, SerializerInterface $serializer, int $idA, SessionInterface $session ): Response
     {
+        $theme = $session->get('theme', 'light'); 
         $qcm = new QCM();
         // Créez le formulaire à partir du type de formulaire QCMType
         $form = $this->createForm(QCMType::class, $qcm);
@@ -87,21 +86,22 @@ class QCMController extends AbstractController
             $this->saveQCMXmlToFile($qcm, $xmlContent);
     
             // Redirigez l'utilisateur vers une page de confirmation ou affichez un message de succès
-            return $this->redirectToRoute('qcm_list' , ['idA' => $idA]);
+            return $this->redirectToRoute('qcm_index' , ['idA' => $idA]);
         }
     
         return $this->render('qcm/qcm_create.html.twig', [
             'form' => $form->createView(),
             'admin_id' => $idA,
-            'course_id'=>$courseId
+            'course_id'=>$courseId, 
+            'theme'=>$theme
         ]);
     }
     
 
-
     #[Route('admin/{idA}/course/{idC}/qcm/{id}', name: 'qcm_show', methods: ['GET'])]
-    public function show(int $idA, int $idC, int $id): Response
+    public function show(int $idA, int $idC, int $id, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light'); 
         $qcm = $this->doctrine->getRepository(QCM::class)->find($id);
         
         if (!$qcm) {
@@ -111,18 +111,103 @@ class QCMController extends AbstractController
         return $this->render('qcm/show.html.twig', [
             'qcm' => $qcm,
             'idC' =>$idC,
-            'admin_id' => $idA
+            'admin_id' => $idA,
+            'theme'=> $theme
+        ]);
+    }
+    
+    #[Route('admin/{idA}/course/{idC}/qcm/{id}/edit', name: 'qcm_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, int $idA,int $idC, int $id, SessionInterface $session): Response
+    {
+        $theme = $session->get('theme', 'light'); 
+        // Récupérer le QCM à modifier depuis la base de données
+        $qcm = $this->doctrine->getRepository(QCM::class)->find($id);
+        
+        if (!$qcm) {
+            throw $this->createNotFoundException('QCM not found');
+        }
+        
+        // Créer le formulaire à partir du type de formulaire QCMType
+        $form = $this->createForm(QCMType::class, $qcm);
+        // Traiter la soumission du formulaire
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrer les modifications dans la base de données
+            $entityManager = $this->doctrine->getManager();
+            $entityManager->flush();
+            
+            // Rediriger l'utilisateur vers la page de détails du QCM
+            return $this->redirectToRoute('qcm_show', ['idA' => $idA, 'idC' => $idC, 'id' => $id]);
+        }
+        
+        // Afficher le formulaire d'édition
+        return $this->render('qcm/edit.html.twig', [
+            'form' => $form->createView(),
+            'qcm' => $qcm,
+            'course_id' => $idC,
+            'admin_id' => $idA,
+            'theme' => $theme
+        ]);
+    }
+
+
+
+    #[Route('admin/{idA}/qcm/{id}', name: 'qcm_delete', methods: ['DELETE'])]
+    public function delete(Request $request, int $idA, int $id): Response
+    {
+        // Récupérer le QCM à supprimer depuis la base de données
+        $entityManager = $this->doctrine->getManager();
+        $qcm = $entityManager->getRepository(QCM::class)->find($id);
+        
+        if (!$qcm) {
+            throw $this->createNotFoundException('QCM not found');
+        }
+        
+        // Vérifier si le token CSRF est valide
+        if ($this->isCsrfTokenValid('delete'.$qcm->getId(), $request->request->get('_token'))) {
+            // Supprimer le QCM de la base de données
+            $entityManager->remove($qcm);
+            $entityManager->flush();
+        }
+        
+        // Rediriger l'utilisateur vers la liste des QCMs
+        return $this->redirectToRoute('qcm_index', ['idA' => $idA]);
+    }
+    
+
+    #[Route('/admin/{idA}/qcm/search', name: 'search_qcm', methods: ['GET'])]
+    public function search(Request $request, int $idA, QCMRepository $QCMRepository, SessionInterface $session): Response
+    {
+        $theme = $session->get('theme', 'light'); 
+        // Récupérer le terme de recherche depuis la requête
+        $searchTerm = $request->query->get('query');
+    
+        // Recherchez les QCM dans la base de données en fonction du terme de recherche
+        $qcms = $QCMRepository->searchByTitle($searchTerm);
+
+        $courseIds = [];
+        foreach ($qcms as $qcm) {
+            // Vérifiez si le QCM a un cours associé
+            $course = $qcm->getCourse();
+            if ($course !== null) {
+                // Récupérer l'ID du cours et l'ajouter à la liste
+                $courseIds[$qcm->getId()] = $course->getId();
+            }
+        }
+    
+        // Renvoyer les résultats de la recherche dans un template Twig
+        return $this->render('qcm/search.html.twig', [
+            'qcms' => $qcms,
+            'admin_id' => $idA,
+            'theme' =>$theme,
+            'search_term' => $searchTerm,
+            'course_ids' => $courseIds,
+
         ]);
     }
     
 
-
-    
-    
-
-    
-    
-    
     
     private function saveQCMXmlToFile(QCM $qcm): void
     {

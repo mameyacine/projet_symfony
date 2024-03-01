@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Post{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+</head>
+<body>
+
+    <nav class=" flex justify-between items-center p-2">
+        <h1>Post</h1>
+        <div class="flex">
+            <ul>
+                <li><a href="{{ path('app_student', {'idS': idS}) }}" class="button">Accueil</a></li>
+                <li><a href="{{ path('student_courses', {'idS' : idS}) }}"  class="button">Mes Cours </a></li>
+                <li><a href="{{ path('post_forum_index', {'idS': idS}) }}" class="button"><i class="fas fa-arrow-rotate-left"></i> </a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="mx-auto mt-8 max-w-lg p-4 rounded-lg shadow-lg overflow-hidden">
+            {{ form_start(form, {'attr': {'class': 'form-bg m-4 p-4'}}) }}
+            <div class="mb-4 form ">
+                    {{ form_label(form.course, 'Cours :', {'class': 'block text-gray-700 font-bold mb-2'}) }}
+                    {{ form_widget(form.course, {'class': 'form-input w-full mt-1'}) }}
+                </div> 
+                <div class="mb-4 form">
+                    {{ form_label(form.content, 'Texte :', {'class': 'block text-gray-700 font-bold mb-2'}) }}
+                    {{ form_widget(form.content, {'attr': {'class': 'form-input w-full mt-1 '}}) }}                    
+                </div>
+
+
+                 
+                <button type="submit" class="my-2 button ">{{ button_label|default('Modifier') }}</button>
+      
+                {{ form_end(form) }}
+        </div>
+</body>
+</html>

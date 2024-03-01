@@ -1,4 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Edit Lessn {% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        
+        .input-color {
+            background-color: #f3f4f6; 
+            border-color: #d1d5db; 
+            color: #374151; 
+            
+        }
+    </style>
+</head>
+   <body>
+
 {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+
+<div class="mb-4 form">
+    {{ form_label(form.name, 'Nom : ', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+    {{ form_widget(form.name , {'class': 'input-color mt-1 w-full'}) }}
+</div>
+
+<div class="mb-4 form">
+    {{ form_label(form.file, 'Fichier: ', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+    {{ form_widget(form.file , {'class': 'input-color mt-1 w-full'}) }}
+</div>
+
+<button class="button text-white font-bold py-2 px-4 rounded">{{ button_label|default('Save') }}</button>
 {{ form_end(form) }}

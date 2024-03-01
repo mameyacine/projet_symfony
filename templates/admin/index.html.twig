@@ -1,15 +1,38 @@
-{# templates/admin/index.html.twig #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration{% endblock %}</title>
+       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-{% extends 'base.html.twig' %}
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-{% block title %}Administration{% endblock %}
+    
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+   
+</head>
 
-{% block body %}
-    <h1>Welcome to the Admin Panel!</h1>
-    <p>This panel allows you to manage various aspects of your application.</p>
-    <ul>
-        <li><a href="{{ path('index_course', {'idA': admin_id})  }}">Load Courses</a></li>
-        <li><a href="{{ path('user_index', {'idA': admin_id}) }}">Manage Users</a></li>
-        <li><a href="{{ path('qcm_list' , {'idA': admin_id}) }}">Manage QCM</a></li>
-    </ul>
-{% endblock %}
+<body class=" h-screen flex justify-center items-center">
+    <div class="container text-center flex flex-col justify-center items-center">
+        <div class="title text-3xl font-bold m-4">Bienvenue Admin {{ admin_user.username }}</div>
+
+        <div class="subtitle mb-4">Choisissez une action :</div>
+        <div class="flex">
+            <a href="{{ path('index_course', {'idA': admin_id}) }}" class="button mx-4">Cours</a>
+            <a href="{{ path('qcm_index', {'idA': admin_id}) }}" class="button mx-4">QCM</a>
+            <a href="{{ path('user_index', {'idA': admin_id}) }}" class="button mx-4">Apprenants</a>
+        </div>
+
+        <!-- Formulaire pour changer de thème -->
+        <form action="{{ path('app_admin_change_theme', {'idA': admin_id}) }}" method="post" class="m-4">
+            <input type="hidden" name="theme" value="{{ theme == 'light' ? 'dark' : 'light' }}">
+            <button type="submit" class="button"> <i class="fa fa-adjust"></i> </button>
+        </form>
+    </div>
+</body>
+</html>

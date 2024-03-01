@@ -1,24 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des cours disponibles</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+</head>
 
-{# templates/popup/index.html.twig #}
+<body>
+    <nav class="px-4">
+        <h1 class="m-2 text-center">Choisir mes premiers cours </h1>
+    </nav>  
 
-<div id="popup-content">
-    <h2>Sélectionnez les thèmes et cours qui vous intéressent :</h2>
-    <form action="{{ path('process_popup_submission', {'idS': student_id}) }}" method="post">
-        <!-- Insérez ici les thèmes et les cours sous forme de checkboxes ou de listes -->
-        <!-- Exemple avec des checkboxes pour les thèmes -->
-        {% for theme in themes %}
-            <label>
-                <input type="checkbox" name="themes[]" value="{{ theme.id }}">
-                {{ theme.name }}
-            </label>
-        {% endfor %}
-        <!-- Exemple avec des checkboxes pour les cours -->
-        {% for course in courses %}
-            <label>
-                <input type="checkbox" name="courses[]" value="{{ course.id }}">
-                {{ course.name }}
-            </label>
-        {% endfor %}
-        <button type="submit">Valider</button>
+
+    <div class="container mx-auto mt-4 ">
+
+    
+    <form action="{{ path('process_popup_submission', {'idS': student_id}) }}" method="post" class="m-2">
+
+
+               <ul class="flex flex-wrap">
+                    {% for theme in themes %}
+                        <li class="w-1/2"> 
+                            <label>
+                                <input type="checkbox" name="themes[]" value="{{ theme.id }}">
+                                {{ theme.name }}
+                            </label>
+                         </li>
+                    {% endfor %}
+                </ul>
+
+        <button type="submit" class="m-2 button">Valider</button>
     </form>
 </div>

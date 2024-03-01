@@ -39,7 +39,66 @@ class CourseRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findUserCourses(User $user): array
+    {
+        return $this->createQueryBuilder('c')
+            ->innerJoin('c.users', 'u')
+            ->andWhere('u.id = :userId')
+            ->setParameter('userId', $user->getId())
+            ->getQuery()
+            ->getResult();
+    }
 
+    public function searchByName(string $name): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.name LIKE :name')
+            ->setParameter('name', '%' . $name . '%')
+            ->getQuery()
+            ->getResult();
+    }
+    public function searchCoursesByUser(int $userId, string $query): array
+    {
+        return $this->createQueryBuilder('c')
+            ->innerJoin('c.users', 'u')
+            ->andWhere('u.id = :userId')
+            ->andWhere('c.name LIKE :query')
+            ->setParameter('userId', $userId)
+            ->setParameter('query', '%' . $query . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findSimilarCoursesByTheme(int $themeId): array
+    {
+        return $this->createQueryBuilder('c')
+            ->join('c.theme', 't')
+            ->where('t.id = :themeId')
+            ->setParameter('themeId', $themeId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findCoursNonInscrits(User $user): array
+    {
+        // Récupérer les cours auxquels l'utilisateur est déjà inscrit
+        $coursInscrits = $user->getCourses()->toArray();
+    
+        // Requête pour récupérer tous les cours auxquels l'utilisateur n'est pas encore inscrit
+        $queryBuilder = $this->createQueryBuilder('c');
+    
+        if (!empty($coursInscrits)) {
+            // Extraire les IDs des cours auxquels l'utilisateur est déjà inscrit
+            $coursInscritIds = array_map(fn($course) => $course->getId(), $coursInscrits);
+    
+            // Exclure les cours auxquels l'utilisateur est déjà inscrit
+            $queryBuilder->andWhere($queryBuilder->expr()->notIn('c.id', $coursInscritIds));
+        }
+    
+        return $queryBuilder->getQuery()->getResult();
+    }
+    
+    
 //    /**
 //     * @return Course[] Returns an array of Course objects
 //     */

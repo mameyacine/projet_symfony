@@ -3,46 +3,41 @@
 namespace App\Controller;
 
 use App\Entity\Course;
-use App\Repository\LessonRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-
-use App\Entity\User;
 use App\Form\CourseType;
 use App\Repository\CourseRepository;
+use App\Repository\LessonRepository;
 use App\Repository\ThemeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+
 
 #[Route('admin/{idA}/course')]
 class CourseController extends AbstractController
 {
-    private $themeRepository;
 
-// Modifier le constructeur pour initialiser CourseRepository
-public function __construct( ThemeRepository $themeRepository)
-{
-    // Assigner les dépendances aux propriétés de la classe
-    $this->themeRepository = $themeRepository;
-
-
-}
-   
     #[Route('/', name: 'index_course', methods: ['GET'])]
-    public function index(CourseRepository $courseRepository, int $idA): Response
+    public function index(CourseRepository $courseRepository, int $idA, SessionInterface $session): Response
     {
+        // Récupérer le thème de la session
+        $theme = $session->get('theme', 'light'); // 'light' est la valeur par défaut si le thème n'est pas défini dans la session
+    
+        // Passer le thème à la vue
         return $this->render('course/index.html.twig', [
             'courses' => $courseRepository->findAll(),
             'admin_id' => $idA,
+            'theme' => $theme, // Passer le thème à la vue
         ]);
     }
 
     
     #[Route('/new', name: 'new_course', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, int $idA, ThemeRepository $themeRepository): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, int $idA, ThemeRepository $themeRepository, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light');
         $course = new Course();
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
@@ -58,7 +53,7 @@ public function __construct( ThemeRepository $themeRepository)
             }
     
             // Récupérer tous les cours associés au thème sélectionné
-            $courses = $theme->getCourses();
+            $courses = $theme->getCourse();
     
             // Initialise une liste pour stocker les utilisateurs
             $users = [];
@@ -90,36 +85,32 @@ public function __construct( ThemeRepository $themeRepository)
             'course' => $course,
             'form' => $form,
             'admin_id' => $idA,
+            'theme' => $theme,
         ]);
     }
     
-    
-    
-    
-    
-    
-    
-    
-
 
  
 
     #[Route('/{id}', name: 'show_course', methods: ['GET'])]
-    public function show(Course $course, int $idA, LessonRepository $lessonRepository): Response
+    public function show(Course $course, int $idA, LessonRepository $lessonRepository, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light');
         $lessons = $lessonRepository->findBy(['course' => $course]);
     
         return $this->render('course/show.html.twig', [
             'course' => $course,
             'admin_id' => $idA,
-            'lessons' => $lessons, // Pass lessons to the template
+            'lessons' => $lessons,
+            'theme' => $theme,
         ]);
     }
     
 
     #[Route('/{id}/edit', name: 'edit_course', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
-    public function edit(Request $request, Course $course, EntityManagerInterface $entityManager, int $idA): Response
+    public function edit(Request $request, Course $course, EntityManagerInterface $entityManager, int $idA, SessionInterface $session): Response
     {
+        $theme = $session->get('theme', 'light');
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
     
@@ -136,14 +127,16 @@ public function __construct( ThemeRepository $themeRepository)
             'course' => $course,
             'form' => $form->createView(),
             'admin_id' => $idA,
+            'theme' => $theme,
         ]);
     }
     
     
 
     #[Route('/{id}', name: 'delete_course', methods: ['POST'])]
-    public function delete(Request $request, Course $course, EntityManagerInterface $entityManager, int $idA): Response
+    public function delete(Request $request, Course $course, EntityManagerInterface $entityManager, int $idA, SessionInterface $session): Response
     {
+    
         if ($this->isCsrfTokenValid('delete'.$course->getId(), $request->request->get('_token'))) {
             $entityManager->remove($course);
             $entityManager->flush();
@@ -152,4 +145,23 @@ public function __construct( ThemeRepository $themeRepository)
         return $this->redirectToRoute('index_course', ['idA' => $idA]);
     }
 
-}    
+
+
+    #[Route('/search-course', name: 'search_course', methods: ['GET'])]
+    public function search(Request $request, CourseRepository $courseRepository, int $idA, SessionInterface $session): Response
+    {
+        $theme = $session->get('theme', 'light');
+        $searchQuery = $request->query->get('query');
+    
+        $courses = $courseRepository->searchByName($searchQuery);
+       
+
+        return $this->render('course/search.html.twig', [
+            'searchQuery' => $searchQuery,
+            'admin_id' => $idA,
+            'courses' => $courses,
+            'theme' => $theme,
+        ]);
+    }
+       
+}

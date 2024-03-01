@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Recherche{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
+   
+</head>
+
+<body>
+
+    <nav class=" flex justify-between items-center">
+        <h1 class="m-2 p-2">Résultats de la recherche : {{ query }}</h1>
+        <div class="flex my-2">
+            <ul>
+                <li><a href="{{ path('student_courses', {'idS': student_id}) }}" class="button"><i class="fas fa-arrow-rotate-left"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-3 gap-4">
+            {% for course in courses %}
+            <a href="{{ path('course_lessons', {'idS': student_id , 'courseId': course.id}) }}" class="btngrid border p-4 rounded-md ">
+                <img src="{{ course.theme.imageUrl }}" alt="{{ course.theme.name }}" class="mx-auto h-20 w-20 object-cover h-40 w-48">
+                <p class="text-center mt-2">{{ course.name }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div> 
+</body>
+</html>

@@ -21,13 +21,13 @@ class PostForum
     private ?\DateTimeInterface $date = null;
 
     #[ORM\ManyToOne(inversedBy: 'postForums')]
-    private ?User $students = null;
+    private ?User $student = null;
+
+ 
 
     #[ORM\ManyToOne(inversedBy: 'postForums')]
-    private ?Theme $themes = null;
+    private ?Course $course = null;
 
-    #[ORM\ManyToOne(inversedBy: 'postForums')]
-    private ?Course $courses = null;
 
     public function getId(): ?int
     {
@@ -58,38 +58,28 @@ class PostForum
         return $this;
     }
 
-    public function getStudents(): ?User
+    public function getStudent(): ?User
     {
-        return $this->students;
+        return $this->student;
     }
 
-    public function setStudents(?User $students): static
+    public function setStudent(?User $student): static
     {
-        $this->students = $students;
+        $this->student = $student;
 
         return $this;
     }
 
-    public function getThemes(): ?Theme
+    
+
+    public function getCourse(): ?Course
     {
-        return $this->themes;
+        return $this->course;
     }
 
-    public function setThemes(?Theme $themes): static
+    public function setCourse(?Course $course): static
     {
-        $this->themes = $themes;
-
-        return $this;
-    }
-
-    public function getCourses(): ?Course
-    {
-        return $this->courses;
-    }
-
-    public function setCourses(?Course $courses): static
-    {
-        $this->courses = $courses;
+        $this->course = $course;
 
         return $this;
     }

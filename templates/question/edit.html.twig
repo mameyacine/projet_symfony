@@ -1,31 +1,60 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Edit Question{% endblock %}
-
-{% block body %}
-    <h1>Edit Question</h1>
-    <p>Form for editing a question</p>
-
-    {{ form_start(form) }}
-    {{ form_row(form.content) }}
-
-    <label for="answers">Answers:</label>
-    <ul id="answers">
-        {% for answer in form.answers %}
-            <li>{{ form_row(answer) }}</li>
-        {% endfor %}
-    </ul>
-
-    {{ form_row(form.correctAnswerIndex) }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% if theme == 'light' %}
+        <link rel="stylesheet" href="{{ asset('css/theme-light.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('css/theme-dark.css') }}">
+    {% endif %}
     
-    {{ form_rest(form) }} {# Add this line to render remaining form fields #}
+</head>
+<body>
+    <nav class=" px-4 flex justify-between items-center">
+        <h1 class="">Modifier la question</h1>
+        <div class="flex space-x-2">
+            <a href="{{ path('qcm_show', {'idA': admin_id, 'idC': idC , 'id': qcm.id}) }}" class="button px-4 py-2 rounded-md hover:bg-gray-400">
+                <i class="fas fa-arrow-rotate-left"></i> 
+            </a>
+        </div>
+    </nav>
 
-    {{ form_end(form) }}
-
-    <form method="post" action="{{ path('delete_question', {'idA': admin_id,'idC':qcm.course.id, 'idQ':qcm.id, 'id': question.id}) }}" onsubmit="return confirm('Are you sure you want to delete this course?');">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ question.id) }}">
-        <button type="submit" class="btn btn-danger">Delete</button>
+    
+ 
+    <div class="container mx-auto mt-8">
+    <form action="{{ path('edit_question', {'idA': admin_id, 'idC': qcm.course.id, 'idQ': qcm.id, 'id':question.id}) }}" class="p-2" method="POST">
+        {{ form_start(form) }}
+        <div class="mb-4">
+            {{ form_label(form.content, 'Contenu :', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+            {{ form_widget(form.content, {'class': 'text-gray-900 input-color mt-1 w-full'}) }}
+        </div>
+        <div class="mb-4">
+            {{ form_label(form.lesson, 'Leçon :', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+            {{ form_widget(form.lesson, {'class': 'input-color mt-1 w-full'}) }}
+        </div>
+        <div class="mb-4">
+            {{ form_label(form.answers, 'Réponses :', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+            <ul>
+                {% for answerField in form.answers %}
+                    <li>{{ form_widget(answerField, {'attr': {'class': 'mx-8 input-color bg-gray-100 mt-1  mb-2'}}) }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="mb-4">
+            {{ form_label(form.correctAnswerIndex, 'Bonne réponse :', {'class': 'block text-gray-700 text-sm font-bold mb-2'}) }}
+            {{ form_widget(form.correctAnswerIndex, {'class': 'input-color mt-1 w-full'}) }}
+        </div>
+        <button type="submit" class="mt-4 inline-block button text-gray-800 px-4 py-2 rounded-md ">Modifier</button>
+        {{ form_end(form) }}
     </form>
+</div>
 
-    <a href="{{ path('qcm_show', {'idA': admin_id, 'idC':qcm.course.id, 'id': qcm.id}) }}">Back to QCM</a>
-{% endblock %}
+
+
+  
+</body>
+</html>

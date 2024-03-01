@@ -16,11 +16,11 @@ class LessonType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('course', EntityType::class, [ // Ajouter un champ EntityType pour sélectionner le cours
-                'class' => Course::class,
-                'label' => 'Course',
-                'required' => true,
-            ])
+            // ->add('course', EntityType::class, [ // Ajouter un champ EntityType pour sélectionner le cours
+            //     'class' => Course::class,
+            //     'label' => 'Course',
+            //     'required' => true,
+            // ])
             ->add('name')
             ->add('file', FileType::class, [
                 'label' => 'Lesson File',

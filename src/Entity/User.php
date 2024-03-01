@@ -232,7 +232,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->postForums->contains($postForum)) {
             $this->postForums->add($postForum);
-            $postForum->setStudents($this);
+            $postForum->setStudent($this);
         }
 
         return $this;
@@ -242,8 +242,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->postForums->removeElement($postForum)) {
             // set the owning side to null (unless already changed)
-            if ($postForum->getStudents() === $this) {
-                $postForum->setStudents(null);
+            if ($postForum->getStudent() === $this) {
+                $postForum->setStudent(null);
             }
         }
 
