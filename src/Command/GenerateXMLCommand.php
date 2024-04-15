@@ -7,8 +7,8 @@ use App\Repository\QCMRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
 
 class GenerateXMLCommand extends Command
 {
@@ -82,19 +82,27 @@ class GenerateXMLCommand extends Command
 
         return $qcmData;
     }
-
     private function saveQCMXmlToFile(QCM $qcm, string $xmlContent): void
     {
-         // Spécifier le chemin complet où vous souhaitez enregistrer le fichier XML
-         $filePath = __DIR__ . '/../../src/Command/qcms/qcm_' . $qcm->getId() . '.xml';
-
-         // Vérifier si le dossier qcms existe, sinon le créer de manière récursive
-         $directoryPath = dirname($filePath);
-         if (!is_dir($directoryPath)) {
-             mkdir($directoryPath, 0777, true);
-         }
-
-        // Enregistrer le contenu XML dans le fichier
-        file_put_contents($filePath, $xmlContent);
+        // Créer un nouvel objet DOMDocument
+        $dom = new \DOMDocument('1.0');
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+    
+        // Charger le contenu XML dans le DOMDocument
+        $dom->loadXML($xmlContent);
+    
+        // Spécifier le chemin complet où vous souhaitez enregistrer le fichier XML
+        $filePath = __DIR__ . '/../../src/Command/qcms/qcm_' . $qcm->getId() . '.xml';
+    
+        // Vérifier si le dossier qcms existe, sinon le créer de manière récursive
+        $directoryPath = dirname($filePath);
+        if (!is_dir($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
+        }
+    
+        // Enregistrer le contenu du DOMDocument dans le fichier avec une indentation
+        file_put_contents($filePath, $dom->saveXML());
     }
+    
 }

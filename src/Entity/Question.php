@@ -3,10 +3,7 @@ namespace App\Entity;
 
 use App\Entity\Lesson;
 use App\Entity\QCM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
 
 #[ORM\Entity]
 class Question
@@ -35,7 +32,6 @@ class Question
 
     public function __construct()
     {
-        // Initialize the answers property as an empty array
         $this->answers = ['', '', '', ''];
         
     }

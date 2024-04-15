@@ -35,7 +35,7 @@ class StudentQCMController extends AbstractController
         $this->noteStudentRepository = $noteStudentRepository;
         $this->QCMRepository = $QCMRepository;
         $this->questionRepository = $questionRepository;
-        $this->courseRepository = $courseRepository; // Ajouter cette ligne
+        $this->courseRepository = $courseRepository;
         $this->threshold = $threshold;
         $this->doctrine = $doctrine;
         
